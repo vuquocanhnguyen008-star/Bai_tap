@@ -1,0 +1,28 @@
+Bài 3 : Thống kê sự cố TIMEOUT trên máy chủ
+## Phần 1: Phân tích
+### Sơ đồ luồng dữ liệu Pipeline
+Sử dụng mô hình Pipeline nối 3 bước để xử lý tự động:
+Đọc tệp -> Lọc từ khóa -> Đếm kết quả
+### Mô tả luồng dữ liệu
+1. **Đọc tệp:** Truy xuất dữ liệu từ tệp log
+2. **Lọc từ khóa:** Lọc các dòng/đối tượng có chứa chuỗi `"TIMEOUT"`.
+3. **Bẫy dữ liệu:** Lọc nối tiếp để loại bỏ các dòng chứa `"NOT TIMEOUT"`.
+4. **Đếm kết quả:** Lấy thuộc tính `.Count` của tập đối tượng kết quả để trả về một con số tổng duy nhất.
+
+## Phần 2: Triển khai
+### 1. Trên PowerShell (Theo đúng yêu cầu đề bài)
+Viết bằng **duy nhất 1 dòng lệnh**:
+(Get-Content ".\logs\server.log" | Select-String "TIMEOUT" | Where-Object { $_ -notmatch "NOT TIMEOUT" }).Count
+*(Nếu tệp log ở thư mục hiện tại, thay tên đường dẫn thành `.\log.txt` hoặc `.\server.log`)*.
+**Giải thích lệnh:**
+* `Get-Content`: Đọc tệp log.
+* `Select-String "TIMEOUT"`: Tìm và giữ lại các dòng chứa từ khóa `TIMEOUT`.
+* `Where-Object { $_ -notmatch "NOT TIMEOUT" }`: Xử lý bẫy dữ liệu, loại bỏ các dòng chứa `NOT TIMEOUT`.
+* (...).Count`: Gom các đối tượng trả về thành mảng và lấy số lượng duy nhất.
+### 2. Trên Git Bash (Mở rộng/Tham khảo)
+grep "TIMEOUT" logs/server.log | grep -v "NOT TIMEOUT" | wc -l
+
+**Giải thích lệnh:**
+* `grep "TIMEOUT"`: Tìm các dòng chứa `TIMEOUT`
+* `grep -v "NOT TIMEOUT"`: Loại bỏ các dòng chứa `NOT TIMEOUT` (tương đương `-v`).
+* `wc -l`: Đếm số dòng văn bản còn lại.
